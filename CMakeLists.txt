@@ -11,6 +11,7 @@ option(ATLAS_BUILD_BENCHMARKS "Build Atlas benchmarks" ON)
 
 add_library(atlas
   src/document.cpp
+  src/index.cpp
   src/tokenizer.cpp
 )
 
