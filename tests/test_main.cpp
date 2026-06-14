@@ -1,3 +1,4 @@
+#include "atlas/compression.hpp"
 #include "atlas/tokenizer.hpp"
 #include "atlas/index.hpp"
 
@@ -42,11 +43,22 @@ void test_index_ranks_matching_documents() {
   require(index.term_count() > 0, "expected indexed terms");
 }
 
+void test_delta_varint_round_trip() {
+  const std::vector<std::uint32_t> values{1, 2, 127, 128, 16'384, 16'400};
+  const auto encoded = atlas::encode_delta_varints(values);
+  const auto decoded = atlas::decode_delta_varints(encoded);
+
+  require(decoded == values, "expected delta varint round trip");
+  require(encoded.size() < values.size() * sizeof(std::uint32_t),
+          "expected compressed byte stream to be smaller than raw uint32 ids");
+}
+
 }  // namespace
 
 int main() {
   test_tokenizer_normalizes_words();
   test_index_ranks_matching_documents();
+  test_delta_varint_round_trip();
   std::cout << "atlas tests passed\n";
   return 0;
 }

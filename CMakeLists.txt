@@ -10,6 +10,7 @@ option(ATLAS_BUILD_TESTS "Build Atlas tests" ON)
 option(ATLAS_BUILD_BENCHMARKS "Build Atlas benchmarks" ON)
 
 add_library(atlas
+  src/compression.cpp
   src/document.cpp
   src/index.cpp
   src/tokenizer.cpp
