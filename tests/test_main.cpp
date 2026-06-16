@@ -1,11 +1,13 @@
 #include "atlas/compression.hpp"
 #include "atlas/index_builder.hpp"
+#include "atlas/persistence.hpp"
 #include "atlas/tokenizer.hpp"
 #include "atlas/index.hpp"
 
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <filesystem>
 #include <vector>
 
 namespace {
@@ -82,6 +84,22 @@ void test_parallel_builder_matches_serial_search() {
           "expected parallel top result to match serial top result");
 }
 
+void test_persistence_round_trip() {
+  atlas::InvertedIndex index;
+  index.add_document("permit-1", "Stormwater plan", "Drainage basin details");
+  index.add_document("permit-2", "Fire plan", "Sprinkler alarm details");
+
+  const auto path = std::filesystem::temp_directory_path() / "atlas-test-index.bin";
+  atlas::save_index(index, path);
+  const auto loaded = atlas::load_index(path);
+  std::filesystem::remove(path);
+
+  const auto results = loaded.search("stormwater basin", 10);
+  require(loaded.document_count() == 2, "expected persisted document count");
+  require(results.size() == 1, "expected persisted search hit");
+  require(results[0].external_id == "permit-1", "expected persisted top hit");
+}
+
 }  // namespace
 
 int main() {
@@ -89,6 +107,7 @@ int main() {
   test_index_ranks_matching_documents();
   test_delta_varint_round_trip();
   test_parallel_builder_matches_serial_search();
+  test_persistence_round_trip();
   std::cout << "atlas tests passed\n";
   return 0;
 }

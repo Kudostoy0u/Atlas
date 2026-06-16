@@ -5,6 +5,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <filesystem>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -51,6 +52,8 @@ class InvertedIndex {
   std::uint64_t total_document_length_{};
 
   friend class IndexBuilder;
+  friend void save_index(const InvertedIndex& index, const std::filesystem::path& path);
+  friend InvertedIndex load_index(const std::filesystem::path& path);
 };
 
 }  // namespace atlas

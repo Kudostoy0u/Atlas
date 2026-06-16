@@ -14,6 +14,7 @@ add_library(atlas
   src/document.cpp
   src/index.cpp
   src/index_builder.cpp
+  src/persistence.cpp
   src/tokenizer.cpp
 )
 
