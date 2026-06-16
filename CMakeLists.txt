@@ -13,6 +13,7 @@ add_library(atlas
   src/compression.cpp
   src/document.cpp
   src/index.cpp
+  src/index_builder.cpp
   src/tokenizer.cpp
 )
 

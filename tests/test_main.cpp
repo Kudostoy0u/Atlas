@@ -1,4 +1,5 @@
 #include "atlas/compression.hpp"
+#include "atlas/index_builder.hpp"
 #include "atlas/tokenizer.hpp"
 #include "atlas/index.hpp"
 
@@ -53,12 +54,41 @@ void test_delta_varint_round_trip() {
           "expected compressed byte stream to be smaller than raw uint32 ids");
 }
 
+void test_parallel_builder_matches_serial_search() {
+  std::vector<atlas::Document> documents{
+      {0, "a", "Alpha permit", "stormwater drainage basin"},
+      {1, "b", "Beta permit", "fire alarm sprinkler"},
+      {2, "c", "Gamma permit", "stormwater basin basin"},
+      {3, "d", "Delta permit", "zoning setback height"},
+  };
+
+  atlas::InvertedIndex serial;
+  for (const auto& document : documents) {
+    serial.add_document(document);
+  }
+
+  const atlas::IndexBuilder builder(2);
+  const auto parallel = builder.build(documents);
+  const auto serial_results = serial.search("stormwater basin", 10);
+  const auto parallel_results = parallel.search("stormwater basin", 10);
+
+  require(parallel.document_count() == serial.document_count(),
+          "expected parallel document count to match serial index");
+  require(parallel.term_count() == serial.term_count(),
+          "expected parallel term count to match serial index");
+  require(parallel_results.size() == serial_results.size(),
+          "expected parallel result count to match serial result count");
+  require(parallel_results[0].external_id == serial_results[0].external_id,
+          "expected parallel top result to match serial top result");
+}
+
 }  // namespace
 
 int main() {
   test_tokenizer_normalizes_words();
   test_index_ranks_matching_documents();
   test_delta_varint_round_trip();
+  test_parallel_builder_matches_serial_search();
   std::cout << "atlas tests passed\n";
   return 0;
 }

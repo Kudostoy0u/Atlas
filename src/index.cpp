@@ -128,4 +128,36 @@ const std::vector<Posting>* InvertedIndex::postings_for(std::string_view term) c
   return &it->second;
 }
 
+void InvertedIndex::replace_from_builder(std::vector<Document> documents,
+                                         std::vector<BuilderPartialIndex> partials) {
+  documents_ = std::move(documents);
+  postings_.clear();
+  document_lengths_.assign(documents_.size(), 0);
+  total_document_length_ = 0;
+
+  for (auto& partial : partials) {
+    for (std::size_t i = 0; i < partial.lengths.size(); ++i) {
+      if (partial.lengths[i] != 0) {
+        document_lengths_[i] = partial.lengths[i];
+      }
+    }
+
+    for (auto& [term, postings] : partial.postings) {
+      auto& destination = postings_[term];
+      destination.insert(destination.end(), postings.begin(), postings.end());
+    }
+  }
+
+  for (auto& [term, postings] : postings_) {
+    (void)term;
+    std::sort(postings.begin(), postings.end(), [](const auto& lhs, const auto& rhs) {
+      return lhs.doc_id < rhs.doc_id;
+    });
+  }
+
+  for (const auto length : document_lengths_) {
+    total_document_length_ += length;
+  }
+}
+
 }  // namespace atlas

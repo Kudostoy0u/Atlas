@@ -23,6 +23,11 @@ struct SearchResult {
   double score{};
 };
 
+struct BuilderPartialIndex {
+  std::unordered_map<std::string, std::vector<Posting>> postings;
+  std::vector<std::uint32_t> lengths;
+};
+
 class InvertedIndex {
  public:
   DocId add_document(std::string external_id, std::string title, std::string body);
@@ -36,11 +41,16 @@ class InvertedIndex {
   [[nodiscard]] const std::vector<Posting>* postings_for(std::string_view term) const;
 
  private:
+  void replace_from_builder(std::vector<Document> documents,
+                            std::vector<BuilderPartialIndex> partials);
+
   std::vector<Document> documents_;
   std::vector<std::uint32_t> document_lengths_;
   std::unordered_map<std::string, std::vector<Posting>> postings_;
   Tokenizer tokenizer_;
   std::uint64_t total_document_length_{};
+
+  friend class IndexBuilder;
 };
 
 }  // namespace atlas
