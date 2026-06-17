@@ -135,7 +135,6 @@ void save_index(const InvertedIndex& index, const std::filesystem::path& path) {
     const auto& document = index.documents_[i];
     write_string(out, document.external_id);
     write_string(out, document.title);
-    write_string(out, document.body);
     write_u32(out, index.document_lengths_[i]);
   }
 
@@ -179,7 +178,6 @@ InvertedIndex load_index(const std::filesystem::path& path) {
     document.id = i;
     document.external_id = read_string(bytes, offset);
     document.title = read_string(bytes, offset);
-    document.body = read_string(bytes, offset);
     index.documents_.push_back(std::move(document));
 
     const auto length = read_u32(bytes, offset);
