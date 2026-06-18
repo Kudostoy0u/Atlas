@@ -94,16 +94,19 @@ std::vector<SearchResult> InvertedIndex::search(std::string_view query,
     results.push_back(SearchResult{doc_id, document.external_id, document.title, score});
   }
 
-  std::sort(results.begin(), results.end(), [](const auto& lhs, const auto& rhs) {
+  const auto better_result = [](const auto& lhs, const auto& rhs) {
     if (lhs.score != rhs.score) {
       return lhs.score > rhs.score;
     }
     return lhs.doc_id < rhs.doc_id;
-  });
+  };
 
   if (results.size() > limit) {
+    std::nth_element(results.begin(), results.begin() + static_cast<std::ptrdiff_t>(limit),
+                     results.end(), better_result);
     results.resize(limit);
   }
+  std::sort(results.begin(), results.end(), better_result);
 
   return results;
 }
