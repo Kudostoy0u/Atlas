@@ -4,3 +4,4 @@ cmake-build-*/
 *.o
 *.out
 .DS_Store
+resume.tex
