@@ -32,3 +32,13 @@ external_id<TAB>title<TAB>body
 ./build/atlas search sample.atlas "stormwater basin" 10
 ./build/atlas stats sample.atlas
 ```
+
+## Benchmark
+
+```sh
+clang++ -std=c++20 -O3 -DNDEBUG -Wall -Wextra -Wpedantic -pthread -Iinclude \
+  src/*.cpp bench/benchmark.cpp -o /tmp/atlas-bench
+/tmp/atlas-bench 100000 120 8
+```
+
+Recent local results are recorded in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
