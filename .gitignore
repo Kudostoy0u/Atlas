@@ -1,5 +1,8 @@
 build/
 cmake-build-*/
+dist/
+node_modules/
+*.tsbuildinfo
 *.atlas
 *.o
 *.out

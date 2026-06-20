@@ -42,3 +42,16 @@ clang++ -std=c++20 -O3 -DNDEBUG -Wall -Wextra -Wpedantic -pthread -Iinclude \
 ```
 
 Recent local results are recorded in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
+
+## Frontend Demo
+
+Atlas also includes a Vite, TypeScript, and React demo that generates a large
+municipal review corpus in the browser, builds a worker-backed BM25 index, and
+shows live throughput, compression, and top-k search latency.
+
+```sh
+npm install
+npm run dev
+```
+
+Open the printed local URL and search across the generated review packets.
