@@ -46,12 +46,15 @@ Recent local results are recorded in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 ## Frontend Demo
 
 Atlas also includes a Vite, TypeScript, and React demo that generates a large
-municipal review corpus in the browser, builds a worker-backed BM25 index, and
-shows live throughput, compression, and top-k search latency.
+document corpus, sends indexing/search work to a native C++ Atlas demo server,
+and shows live throughput, compression, and top-k search latency.
 
 ```sh
 npm install
+npm run build:lexicon
 npm run dev
 ```
 
-Open the printed local URL and search across the generated review packets.
+`npm run dev` compiles `apps/demo_server.cpp`, starts the native C++ API on
+`127.0.0.1:8787`, and starts Vite on `127.0.0.1:5173`. The React app only owns
+the UI; indexing, BM25 scoring, and result retrieval are handled by C++.

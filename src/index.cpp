@@ -131,6 +131,10 @@ const std::vector<Posting>* InvertedIndex::postings_for(std::string_view term) c
   return &it->second;
 }
 
+const Document& InvertedIndex::document(DocId doc_id) const {
+  return documents_.at(doc_id);
+}
+
 void InvertedIndex::replace_from_builder(std::vector<Document> documents,
                                          std::vector<BuilderPartialIndex> partials) {
   documents_ = std::move(documents);

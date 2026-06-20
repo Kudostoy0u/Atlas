@@ -35,6 +35,9 @@ add_executable(atlas-cli apps/atlas.cpp)
 target_link_libraries(atlas-cli PRIVATE atlas)
 set_target_properties(atlas-cli PROPERTIES OUTPUT_NAME atlas)
 
+add_executable(atlas-demo-server apps/demo_server.cpp)
+target_link_libraries(atlas-demo-server PRIVATE atlas)
+
 if(ATLAS_BUILD_TESTS)
   enable_testing()
   add_executable(atlas-tests tests/test_main.cpp)

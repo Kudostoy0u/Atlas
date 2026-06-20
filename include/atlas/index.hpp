@@ -40,6 +40,7 @@ class InvertedIndex {
   [[nodiscard]] std::size_t term_count() const;
   [[nodiscard]] double average_document_length() const;
   [[nodiscard]] const std::vector<Posting>* postings_for(std::string_view term) const;
+  [[nodiscard]] const Document& document(DocId doc_id) const;
 
  private:
   void replace_from_builder(std::vector<Document> documents,

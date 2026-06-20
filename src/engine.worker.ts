@@ -1,26 +1,27 @@
-import { generateDocuments } from "./corpus";
-import { BrowserAtlasIndex } from "./searchEngine";
+const apiBase = "http://127.0.0.1:8787";
 
-const index = new BrowserAtlasIndex();
-
-self.onmessage = (event: MessageEvent) => {
+self.onmessage = async (event: MessageEvent) => {
   const { type, payload, requestId } = event.data;
 
   if (type === "build") {
-    const documents = generateDocuments(payload.count);
-    const stats = index.build(documents);
+    const response = await fetch(`${apiBase}/api/build?count=${payload.count}`);
+    const stats = await response.json();
     self.postMessage({ type: "built", requestId, stats });
     return;
   }
 
   if (type === "search") {
-    const started = performance.now();
-    const results = index.search(payload.query, payload.limit);
+    const params = new URLSearchParams({
+      q: payload.query,
+      limit: String(payload.limit)
+    });
+    const response = await fetch(`${apiBase}/api/search?${params}`);
+    const { results, latencyMs } = await response.json();
     self.postMessage({
       type: "results",
       requestId,
       results,
-      latencyMs: performance.now() - started
+      latencyMs
     });
   }
 };
